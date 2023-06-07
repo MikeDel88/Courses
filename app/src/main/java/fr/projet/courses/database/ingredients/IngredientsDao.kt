@@ -14,7 +14,10 @@ interface IngredientsDao {
     @Query("SELECT * FROM ingredients")
     fun getAll(): LiveData<List<Ingredients>>
 
-    @Query("SELECT * FROM courses WHERE id = :ingredientId")
+    @Query("SELECT * FROM ingredients WHERE course_id = :courseId")
+    fun getIngredientsByCourseId(courseId: Int): LiveData<List<Ingredients>>
+
+    @Query("SELECT * FROM ingredients WHERE id = :ingredientId")
     fun getIngredientById(ingredientId: Int): Ingredients
 
     @Insert

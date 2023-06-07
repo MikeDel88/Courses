@@ -1,5 +1,6 @@
 package fr.projet.courses.ui.courses
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +22,7 @@ sealed class RequestState {
     object SUCCESS: RequestState()
 }
 
-class CourseViewModel(courseId: Int = 0, private val coursesRepository: CoursesRepository): ViewModel() {
+class CourseViewModel(private val coursesRepository: CoursesRepository): ViewModel() {
 
     private val uiState = MutableLiveData<UiState>()
     fun getUiState() = uiState
@@ -30,25 +31,20 @@ class CourseViewModel(courseId: Int = 0, private val coursesRepository: CoursesR
     fun getRequestState() = requestState
 
     private val course = MutableLiveData<Courses>()
-    fun getCourse() = course
-
-    private val isModeUpdate = courseId > 0
-
-    init {
-        Timber.i("init CourseViewModel")
-        uiState.value = if(isModeUpdate) UiState.UPDATE else UiState.INSERT
-        Timber.i("State : ${uiState.value}")
-
-        if(isModeUpdate) updateState(courseId)
-    }
-
-    private fun updateState(courseId: Int) {
-        Timber.i("UpdateState : get course $courseId")
-        uiState.value = UiState.UPDATE
-        viewModelScope.launch {
-            course.value = coursesRepository.getById(courseId)
+    fun getCourse(courseId: Int): LiveData<Courses> {
+        if(courseId > 0)
+        {
+            viewModelScope.launch {
+                uiState.value = UiState.UPDATE
+                course.value = coursesRepository.getById(courseId)
+            }
+        }
+        else {
+            uiState.value = UiState.INSERT
+            course.value = Courses(0, "")
         }
 
+        return course
     }
 
     fun saveCourse(nom: String, date: String, done: Boolean) = viewModelScope.launch {

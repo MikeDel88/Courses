@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import fr.projet.courses.App
 import fr.projet.courses.data.courses.Courses
 import fr.projet.courses.databinding.FragmentCoursesListBinding
-import fr.projet.courses.ui.courses.EXTRA_COURSE_ID
 import fr.projet.courses.ui.ViewModelUiFactory
 import timber.log.Timber
 
@@ -41,8 +40,8 @@ class CoursesListFragment : Fragment(), CoursesListAdapter.CoursesListAdapterLis
 
         binding.floatingActionButton.setOnClickListener { navigateToAddCourse() }
 
-        viewModel = ViewModelProvider(requireActivity(), ViewModelUiFactory(repository = App.repositoryListeCourses))[CoursesListViewModel::class.java]
-        viewModel.getViewState.observe(requireActivity()) { state -> updateUi(state!!) }
+        viewModel = ViewModelProvider(this, ViewModelUiFactory(repository = App.repositoryListeCourses))[CoursesListViewModel::class.java]
+        viewModel.getViewState.observe(viewLifecycleOwner) { state -> updateUi(state!!) }
     }
 
     override fun onDestroyView() {
@@ -72,18 +71,12 @@ class CoursesListFragment : Fragment(), CoursesListAdapter.CoursesListAdapterLis
     override fun onClickCourseItem(courses: Courses) {
         Timber.i("onClickCourseItem : $courses")
         val action = CoursesListFragmentDirections.actionCoursesListFragmentToIngredientsListFragment()
-        with(action.arguments) {
-            putInt(EXTRA_COURSE_ID, courses.id)
-        }
         findNavController().navigate(action)
     }
 
     override fun onLongClickCourseItem(courses: Courses) {
         Timber.i("onLongClickCourseItem : $courses")
-        val action = CoursesListFragmentDirections.actionCoursesListFragmentToAddCourseFragment()
-        with(action.arguments) {
-            putInt(EXTRA_COURSE_ID, courses.id)
-        }
+        val action = CoursesListFragmentDirections.actionCoursesListFragmentToAddCourseFragment(courseId = courses.id)
         findNavController().navigate(action)
     }
 

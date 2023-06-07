@@ -16,7 +16,11 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" >
+            <argument
+                android:name="courseId"
+                android:defaultValue="0" />
+        </action>
         <action
             android:id="@+id/action_coursesListFragment_to_ingredientsListFragment"
             app:destination="@id/ingredientsListFragment" />
@@ -26,7 +30,12 @@
         android:id="@+id/addCourseFragment"
         android:name="fr.projet.courses.ui.courses.ModifyCourseFragment"
         android:label="Ajouter une course"
-        tools:layout="@layout/fragment_modify_course" />
+        tools:layout="@layout/fragment_modify_course" >
+        <argument
+            android:name="courseId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
 
     <fragment
         android:id="@+id/ingredientsListFragment"

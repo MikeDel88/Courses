@@ -10,19 +10,21 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.datepicker.MaterialDatePicker
 import fr.projet.courses.App
 import fr.projet.courses.databinding.FragmentModifyCourseBinding
 import fr.projet.courses.ui.MainActivity
 import fr.projet.courses.ui.ViewModelUiFactory
 
-const val EXTRA_COURSE_ID = "ID"
-
 class ModifyCourseFragment : Fragment() {
 
     private lateinit var viewModel: CourseViewModel
     private var _binding: FragmentModifyCourseBinding? = null
     private val binding get() = _binding!!
+
+    private val args: ModifyCourseFragmentArgs by navArgs()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentModifyCourseBinding.inflate(inflater, container, false)
@@ -36,12 +38,11 @@ class ModifyCourseFragment : Fragment() {
         binding.valideButton.setOnClickListener { setValidation() }
         binding.deleteButton.setOnClickListener { setDelete() }
 
-        val id = arguments?.getInt(EXTRA_COURSE_ID) ?: 0
 
-        viewModel = ViewModelProvider(requireActivity(),  ViewModelUiFactory(id, App.repositoryListeCourses))[CourseViewModel::class.java]
+        viewModel = ViewModelProvider(this,  ViewModelUiFactory(App.repositoryListeCourses))[CourseViewModel::class.java]
 
         viewModel.getUiState().observe(viewLifecycleOwner) { state -> updateUi(state) }
-        viewModel.getCourse().observe(viewLifecycleOwner) {  course ->
+        viewModel.getCourse(args.courseId).observe(viewLifecycleOwner) {  course ->
             binding.nameEditText.setText(course.name)
             binding.dateCreatedTextView.text = course.createdTime
             binding.doneSwitch.isChecked = course.done

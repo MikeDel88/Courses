@@ -8,14 +8,11 @@ import fr.projet.courses.data.ingredients.Ingredients
 import fr.projet.courses.database.courses.CoursesDao
 import fr.projet.courses.database.ingredients.IngredientsDao
 
-const val CURRENT_VERSION = 1
-const val LASTEST_VERSION = CURRENT_VERSION + 1
-
 
 @Database(entities = [Courses::class, Ingredients::class],
-    version = LASTEST_VERSION,
+    version = 3,
     exportSchema = true,
-    autoMigrations = [AutoMigration (from = CURRENT_VERSION, to = LASTEST_VERSION)]
+    autoMigrations = [AutoMigration (from = 1, to = 2), AutoMigration (from = 2, to = 3)]
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun coursesDao(): CoursesDao
